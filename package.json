@@ -1,0 +1,35 @@
+{
+  "name": "back-to-home",
+  "version": "0.0.1",
+  "description": "A little game...",
+  "main": "index.html",
+  "scripts": {
+    "start": "gulp",
+    "serve": "gulp serve"
+  },
+  "repository": {
+    "type": "git",
+    "url": ""
+  },
+  "keywords": [
+    "game"
+  ],
+  "author": "Viktor Uhryn",
+  "license": "ISC",
+  "bugs": {
+    "url": ""
+  },
+  "homepage": "",
+  "devDependencies": {
+    "browser-sync": "~2.26.7",
+    "del": "~5.0.0",
+    "gulp": "~4.0.2",
+    "gulp-closure-compiler": "^0.4.0",
+    "gulp-concat": "~2.6.1",
+    "gulp-inject": "~5.0.4",
+    "gulp-size": "~3.0.0",
+    "gulp-terser": "^1.2.0",
+    "gulp-watch": "~5.0.1",
+    "gulp-zip": "~5.0.0"
+  }
+}
