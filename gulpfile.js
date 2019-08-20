@@ -23,7 +23,12 @@ function compileIndex() {
 function compileScripts() {
   return src(config.sources.scripts)
     .pipe(concat('app.js'))
-    .pipe(terser())
+    .pipe(terser({
+      compress: {
+        booleans_as_integers: true
+      },
+      toplevel: true
+    }))
     .pipe(dest(config.release.scripts));
 }
 

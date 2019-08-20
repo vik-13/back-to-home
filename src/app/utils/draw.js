@@ -1,4 +1,5 @@
 window.draw = (() => {
+	let t = 'transparent';
 	return {
 		r: (g, size, width) => {
 			c.save();
@@ -7,8 +8,8 @@ window.draw = (() => {
 			}
 			g.forEach((p) => {
 				bp();
-				c.fillStyle = color.get(p[2]) || p[2] || 'transparent';
-				c.strokeStyle = color.get(p[1]) || p[1] || 'transparent';
+				c.fillStyle = color.get(p[2]) || p[2] || t;
+				c.strokeStyle = color.get(p[1]) || p[1] || t;
 				c.lineWidth = !p[3] ? width : 1;
 				c.lineJoin = 'round';
 				m(p[0][0], p[0][1]);
@@ -19,7 +20,7 @@ window.draw = (() => {
 				c.stroke();
 				p[3] && c.fill();
 			});
-			c.restore();
+			c.restore();8
 		}
 	};
 })();
