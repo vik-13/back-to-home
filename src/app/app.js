@@ -7,11 +7,7 @@
     mousePosition: new V(),
     start: +new Date(),
     last: +new Date(),
-    paused: true,
-    byDeath: false,
-    byWin: false,
-    night: 0,
-    sunset: 0
+    paused: true
   };
 
   function init() {
@@ -26,19 +22,11 @@
 
     resize();
 
-    // scene.i();
+    control.i();
+
+    scene.i();
 
     live();
-
-    gc.canvas.addEventListener('click', (e) => {
-      // if (gc.paused) {
-      //     gc.paused = false;
-      //     gc.byDeath = false;
-      //     gc.byWin = false;
-      // } else {
-      //     scene.interaction(new Vector(e.offsetX, e.offsetY).div(gc.originalRatio));
-      // }
-    });
 
     gc.canvas.addEventListener('mousemove', (e) => {
       gc.mousePosition = new V(e.offsetX, e.offsetY);
@@ -50,8 +38,8 @@
     gc.originalRatio = Math.min(gc.size.x / gc.res.x, gc.size.y / gc.res.y);
     gc.canvas.style.width = Math.round(gc.res.x * gc.originalRatio) + 'px';
     gc.canvas.style.height = Math.round(gc.res.y * gc.originalRatio) + 'px';
-    // gc.ratio = gc.originalRatio * (window.devicePixelRatio || 1);
-    gc.ratio = gc.originalRatio;
+    gc.ratio = gc.originalRatio * (window.devicePixelRatio || 1);
+    // gc.ratio = gc.originalRatio;
 
     changeCanvasSize();
   }
@@ -68,34 +56,15 @@
     requestAnimationFrame(live);
   }
 
-  // function endGame(byWin) {
-  //     gc.night = 0;
-  //     gc.sunset = 0;
-  //     gc.byDeath = !byWin;
-  //     gc.byWin = byWin;
-  //     gc.paused = true;
-  // }
-
   function n() {
-    // if (!gc.paused) {
-    //     gc.night = !sun.getTime().day && Math.abs(sun.getTime().part) >= .8 ?
-    //         ((1 - Math.abs(sun.getTime().part)) / .2) : !sun.getTime().day ? 1 : 0;
-    //     gc.sunset = Math.abs(sun.getTime().part) > .8 ? ((Math.abs(sun.getTime().part) - .8) / .2) : 0;
-    // }
-    // scene.n();
-    // if (character.isDead()) {
-    //     endGame(false);
-    // }
-    //
-    // if (character.isFinish()) {
-    //     endGame(true);
-    // }
+    scene.n();
+    // console.log(control.pressed);
   }
 
   function r() {
     c.save();
     c.scale(gc.ratio, gc.ratio);
-    // scene.r();
+    scene.r();
     c.restore();
   }
 
