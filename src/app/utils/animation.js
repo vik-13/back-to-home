@@ -47,4 +47,6 @@ function Anim(g, a, s, f) {
 		});
 		return latestSlide;
   };
+
+  this.isFinished = () => isFinished;
 }

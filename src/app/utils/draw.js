@@ -20,7 +20,7 @@ window.draw = (() => {
 				c.stroke();
 				p[3] && c.fill();
 			});
-			c.restore();8
+			c.restore();
 		}
 	};
 })();

@@ -2,34 +2,18 @@ window.map = (() => {
   const scale = 40;
   const mapDataSource = [
     {
-      x: 1,
-      y: 2,
-      w: 1,
-      h: 8
-    },
-    {
-      x: 1,
+      x: 3,
       y: 1,
-      w: 10,
-      h: 1
+      w: 4,
+      h: 1,
+      d: new V(4, 3)
     },
     {
-      x: 1,
-      y: 15,
-      w: 10,
-      h: 1
-    },
-    {
-      x: 10,
-      y: 2,
-      w: 1,
-      h: 8
-    },
-    {
-      x: 12,
+      x: 15,
       y: 1,
-      w: 10,
-      h: 1
+      w: 4,
+      h: 1,
+      d: new V(-4, 0)
     }
   ];
   const mapData = [];
@@ -37,24 +21,17 @@ window.map = (() => {
   return {
     i: () => {
       mapDataSource.forEach((item) => {
-        mapData.push({
-          x: item.x * scale,
-          y: item.y * scale,
-          w: item.w * scale,
-          h: item.h * scale
-        });
+        mapData.push(new Block(item.x * scale, item.y * scale, item.w * scale, item.h * scale, item.d.get().mult(scale)));
       });
     },
     n: () => {
-
+      mapData.forEach((item) => {
+        item.n();
+      });
     },
     r: () => {
       mapData.forEach((item) => {
-        c.save();
-        c.translate(item.x, item.y);
-        c.fillStyle = '#000';
-        c.fillRect(0, 0, item.w, item.h);
-        c.restore();
+        item.r();
       });
     },
     getMap: () => mapData
