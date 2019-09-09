@@ -4,21 +4,28 @@ window.scene = (() => {
       map.i();
       character.i();
     },
+    reset: () => {
+      map.reset();
+    },
     n: () => {
       map.n();
       character.n();
+      camera.n();
     },
     r: () => {
       c.save();
       let bg = c.createLinearGradient(0, 0, 0, gc.res.y);
-      bg.addColorStop(0, '#999999');
-      bg.addColorStop(1, '#111111');
+      bg.addColorStop(0, 'hsl(37, 14%, 15%)');
+      bg.addColorStop(1, 'hsl(37, 14%, 5%)');
       c.fillStyle = bg;
       c.fillRect(0, 0, gc.res.x, gc.res.y);
       c.restore();
 
+      c.save();
+      camera.r();
       map.r();
       character.r();
+      c.restore();
     }
   };
 })();

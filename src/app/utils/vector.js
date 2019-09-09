@@ -17,7 +17,8 @@ function V(x, y) {
 	};
 
 	this.distance = (v) => Math.hypot(this.x - v.x, this.y - v.y);
-		this.div = (n) => {
+
+	this.div = (n) => {
 		this.x /= n;
 		this.y /= n;
 		return this;

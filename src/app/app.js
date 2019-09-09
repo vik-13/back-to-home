@@ -56,8 +56,21 @@
     requestAnimationFrame(live);
   }
 
+  function endGame() {
+    character.reset();
+    map.reset();
+  }
+
+  function endLevel() {
+
+  }
+
   function n() {
     scene.n();
+
+    if (character.isDead()) {
+      endGame();
+    }
     // console.log(control.pressed);
   }
 
