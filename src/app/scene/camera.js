@@ -14,10 +14,10 @@ window.camera = (() => {
         position.x = 0;
       }
 
-      if (characterPosition.y - position.y <= 300) {
-        position.y = characterPosition.y - 300;
-      } else if ((position.y + gc.res.y) - characterPosition.y <= 300) {
-        position.y = characterPosition.y - (gc.res.y - 300);
+      if (characterPosition.y - position.y <= 200) {
+        position.y = characterPosition.y - 200;
+      } else if ((position.y + gc.res.y) - characterPosition.y <= 200) {
+        position.y = characterPosition.y - (gc.res.y - 200);
       }
       if (position.y < 0) {
         position.y = 0;

@@ -17,6 +17,12 @@ window.character = (() => {
   };
   let inAir = false;
 
+  let onWall = {
+    active: false,
+    available: true,
+    start: +new Date()
+  };
+
   function collision(position) {
     const collisionInfo = {
       touches: [],
@@ -24,7 +30,7 @@ window.character = (() => {
     };
 
     map.getMap().forEach((block) => {
-      if (position.x + size.x > block.x && position.x < block.x + block.w && position.y < block.y + block.h && position.y + size.y > block.y) {
+      if (block.active && position.x + size.x > block.x && position.x < block.x + block.w && position.y < block.y + block.h && position.y + size.y > block.y) {
         const coords = [
           block.y + block.h,
           block.x + block.w,
@@ -45,8 +51,12 @@ window.character = (() => {
           side: side,
           type: block.type,
           intersect: coords[side],
-          velocity: block.velocity.get()
+          velocity: block.getVelocity()
         });
+
+        if (block.type === 4) {
+          block.startFalling();
+        }
       }
     });
 
@@ -55,6 +65,7 @@ window.character = (() => {
 
   function toDie() {
     if (die.dying) return;
+    velocity = new V();
     die.dying = true;
     setTimeout(() => {
       toDead();
@@ -77,10 +88,15 @@ window.character = (() => {
         isDead: false
       };
       characterAnimations.to('stay');
+      inAir = false;
     },
     n: () => {
       if (die.dying) {
         characterAnimations.to('die', false, true);
+        const acc = velocity.get().normalize().mult(-0.017);
+        acc.add(gc.gravity.get().mult(MASS / 2));
+        velocity.add(acc);
+        position.add(velocity);
         return false;
       }
 
@@ -120,6 +136,7 @@ window.character = (() => {
               velocity.x /= 2;
             }
           }
+
         }
         if (item.side === 1) {
           position.x = item.intersect;
