@@ -16,7 +16,7 @@ window.scene = (() => {
       c.save();
       let bg = c.createLinearGradient(0, 0, 0, gc.res.y);
       bg.addColorStop(0, 'hsl(37, 30%, 45%)');
-      bg.addColorStop(1, 'hsl(37, 30%, 35%)');
+      bg.addColorStop(1, 'hsl(37, 30%, 25%)');
       c.fillStyle = bg;
       c.fillRect(0, 0, gc.res.x, gc.res.y);
       c.restore();

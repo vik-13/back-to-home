@@ -8,28 +8,51 @@ function SawBlock(type, x, y, w, h, d) {
   this.active = true;
   this.collisionRadius = 35;
 
+
+  const func = [
+    () => {
+      velocity += acc;
+      angle += velocity;
+
+      if (velocity <= -.5) nextFunc();
+    },
+    () => {
+      velocity *= .97;
+      angle += velocity;
+      const current = original.get().add(this.d.get().mult(shift));
+      this.x = current.x;
+      this.y = current.y;
+      if (shift > 1 || shift < 0) {
+        direction *= -1;
+        nextFunc();
+      }
+      shift += (step * direction);
+    }
+  ];
   const g = [[[19,0,28,11,27,21,13,17,0,28,12,26,20,34,10,39,7,56,16,45,24,46,22,56,36,68,32,56,39,48,48,58,65,56,53,50,49,40,63,43,76,30,62,33,52,27,64,16,54,0,54,12,41,19,33,4],"#000","#000",1]];
-  const gHolder = [[[12,0,0,22,11,40,40,36,40,4],"#000000","black",1],[[19,16,16,20,19,24,24,23,26,17],"#000000",color.mechanics,1]];
-  const speed = 7;
+  const gHolder = [[[6,6,0,22,7,37,23,41,36,35,40,22,36,7,21,0],"#000000","black",1],[[20,17,17,21,20,24,24,23,26,18],"#000000",color.mechanics,1]];
+  const speed = 6;
   let angle = 0;
+  let acc = -.01;
   let velocity = 0;
+  let currentFunc = -1;
 
   let original = new V(x, y);
   let shift = 0;
   let step = 1 / Math.floor(d.mag() / speed);
   let direction = 1;
 
-  this.n = () => {
-    angle -= .2;
-    velocity += angle;
-
-    const current = original.get().add(this.d.get().mult(shift));
-    this.x = current.x;
-    this.y = current.y;
-    if (shift > 1 || shift < 0) {
-      direction *= -1;
+  function nextFunc() {
+    currentFunc++;
+    if (currentFunc === func.length) {
+      currentFunc = 0;
     }
-    shift += (step * direction);
+  }
+
+  nextFunc();
+
+  this.n = () => {
+    func[currentFunc]();
   };
 
   this.center = () => new V(this.x + 15, this.y + 15);
@@ -78,7 +101,7 @@ function BrokenBlock(type, x, y, w, h, d) {
   };
 
   const g = [[[0,0,40,0,39,33,33,29,26,37,16,31,9,29,7,38,0,34],"#000","#000",1]];
-  const gHolder = [[[12,0,0,22,11,40,40,36,40,4],"#000000","black",1],[[19,16,16,20,19,24,24,23,26,17],"#000000","yellow",1]];
+  const gHolder = [[[12,0,0,22,11,40,40,36,40,4],"#000000","black",1],[[19,16,16,20,19,24,24,23,26,17],"#000000","color.mechanics",1]];
   const speed = 2;
 
   let original = new V(x, y);
@@ -125,16 +148,42 @@ function BrokenBlock(type, x, y, w, h, d) {
           this.falling.active = false;
           this.falling.falling = false;
           this.falling.dead = false;
-          this.falling.opacity = 1;
           this.active = true;
           this.x = x;
           this.y = y;
         }, 2000)
       }
     }
+
+    if (!this.falling.active) {
+      this.falling.opacity += .05;
+      if (this.falling.opacity > 1) this.falling.opacity = 1;
+    }
   };
 
   this.r = () => {
+    if (this.isMovable) {
+      // Holder 1
+      c.save();
+      c.translate(original.x + (w / 2), original.y + (h / 2));
+      draw.r(gHolder, [40, 40]);
+      c.restore();
+
+      // Holder 2
+      c.save();
+      c.translate(original.x + d.x + (w / 2), original.y + d.y + (h / 2));
+      draw.r(gHolder, [40, 40]);
+      c.restore();
+
+      // Line
+      c.save();
+      c.strokeStyle = color.mechanics;
+      c.moveTo(original.x + (w / 2), original.y + (h / 2));
+      c.lineTo(original.x + d.x + (w / 2), original.y + d.y + (h / 2));
+      c.stroke();
+      c.restore();
+    }
+
     c.save();
     c.translate(this.x + 20, this.y + 20);
     c.globalAlpha = this.falling.opacity;
@@ -142,7 +191,7 @@ function BrokenBlock(type, x, y, w, h, d) {
     for (let i = 0; i < Math.floor(this.w / 40); i++) {
       c.save();
       if (this.falling.active) {
-        c.translate(i * 40 + rInt(-2, 2), rInt(-2, 2));
+        c.translate(i * 40 + rInt(-1, 1), rInt(-1, 1));
       } else {
         c.translate(i * 40, 0);
       }
@@ -151,20 +200,6 @@ function BrokenBlock(type, x, y, w, h, d) {
     }
     c.globalAlpha = 1;
     c.restore();
-
-    if (this.isMovable) {
-      // Holder 1
-      c.save();
-      c.translate(original.x + 18, original.y + 18);
-      draw.r(gHolder, [40, 40]);
-      c.restore();
-
-      // Holder 2
-      c.save();
-      c.translate(original.x + d.x + 18, original.y + d.y + 18);
-      draw.r(gHolder, [40, 40]);
-      c.restore();
-    }
   };
 }
 
