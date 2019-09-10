@@ -8,6 +8,7 @@ window.character = (() => {
     dying: false
   };
   let levelIsCompleted = false;
+  let isGoingBack = false;
   let velocity = new V();
   let position;
   const size = {x: 36, y: 59};
@@ -85,7 +86,7 @@ window.character = (() => {
     },
     reset: () => {
       velocity = new V();
-      position = map.getStart().get();
+      position = map.getCharacterStart().get();
       die = {
         dying: false,
         isDead: false
@@ -93,6 +94,7 @@ window.character = (() => {
       characterAnimations.to('stay');
       inAir = false;
       levelIsCompleted = false;
+      isGoingBack = false;
     },
     n: () => {
       if (die.dying) {
@@ -237,11 +239,15 @@ window.character = (() => {
         velocity.y /= 1.2;
       }
 
-      position.x = position.x < 0 ? 0 : position.x;
+      if (position.x < 0 && map.isFirst()) {
+        position.x = 0;
+      } else if (position.x + size.x <= 0) {
+        isGoingBack = true;
+      }
 
       if (position.y + size.y < 0) toDie();
 
-      if (position.x >= map.getEndLine()) {
+      if (position.x >= map.getEnd().x + 40) {
         levelIsCompleted = true;
       }
     },
@@ -265,6 +271,7 @@ window.character = (() => {
     },
     position: () => position,
     isDead: () => die.isDead,
-    levelIsCompleted: () => levelIsCompleted
+    levelIsCompleted: () => levelIsCompleted,
+    isGoingBack: () => isGoingBack
   };
 })();

@@ -57,17 +57,17 @@
   }
 
   function reset() {
-    character.reset();
     map.reset();
+    character.reset();
     gc.paused = false;
   }
 
-  function nextLevel() {
-    if (map.isLast()) {
+  function nextLevel(direction) {
+    if (direction === 1 && map.isLast()) {
       // TODO WIN!
     } else {
       setTimeout(() => {
-        map.nextLevel();
+        map.nextLevel(direction);
         reset();
       }, 1000);
     }
@@ -77,9 +77,12 @@
     if (gc.paused) return;
     scene.n();
 
-    if (character.levelIsCompleted()) {
+    if (character.isGoingBack()) {
       gc.paused = true;
-      nextLevel();
+      nextLevel(-1);
+    } else if (character.levelIsCompleted()) {
+      gc.paused = true;
+      nextLevel(1);
     } else if (character.isDead()) {
       gc.paused = true;
       reset();

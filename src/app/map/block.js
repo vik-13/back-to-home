@@ -33,7 +33,7 @@ function SawBlock(type, x, y, w, h, d) {
   const gHolder = [[[6,6,0,22,7,37,23,41,36,35,40,22,36,7,21,0],"#000000","black",1],[[20,17,17,21,20,24,24,23,26,18],"#000000",color.mechanics,1]];
   const speed = 6;
   let angle = 0;
-  let acc = -.01;
+  let acc = -.015;
   let velocity = 0;
   let currentFunc = -1;
 
