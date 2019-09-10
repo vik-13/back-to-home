@@ -1,12 +1,13 @@
 window.character = (() => {
-  const START = new V(200, 300);
   const MASS = .9;
   const MAX_SPEED = 4;
+  const MAX_STAMINA = 15;
 
   let die = {
     isDead: false,
     dying: false
   };
+  let levelIsCompleted = false;
   let velocity = new V();
   let position;
   const size = {x: 36, y: 59};
@@ -17,11 +18,7 @@ window.character = (() => {
   };
   let inAir = false;
 
-  let onWall = {
-    active: false,
-    available: true,
-    start: +new Date()
-  };
+  let stamina = MAX_STAMINA;
 
   function collision(position) {
     const collisionInfo = {
@@ -29,7 +26,13 @@ window.character = (() => {
       sides: []
     };
 
-    map.getMap().forEach((block) => {
+    map.getMap().enemy.forEach((block) => {
+      if (block.center().distance(position.get().add(new V(size.x / 2, size.y / 2))) < block.collisionRadius + 20) {
+        toDie();
+      }
+    });
+
+    map.getMap().map.forEach((block) => {
       if (block.active && position.x + size.x > block.x && position.x < block.x + block.w && position.y < block.y + block.h && position.y + size.y > block.y) {
         const coords = [
           block.y + block.h,
@@ -89,6 +92,7 @@ window.character = (() => {
       };
       characterAnimations.to('stay');
       inAir = false;
+      levelIsCompleted = false;
     },
     n: () => {
       if (die.dying) {
@@ -113,7 +117,6 @@ window.character = (() => {
 
       velocity.add(acc);
       velocity.x = Math.abs(velocity.x) < MAX_SPEED ? velocity.x : ((Math.abs(velocity.x) / velocity.x) * MAX_SPEED);
-
       position.add(velocity);
 
       const collisionResult = collision(position);
@@ -124,7 +127,9 @@ window.character = (() => {
           return;
         }
 
-        if (item.side === 0) {
+        if (item.side === 0 && velocity.y <= 0) {
+          stamina += .3;
+          if (stamina > MAX_STAMINA) stamina = MAX_STAMINA;
           position.y = item.intersect;
           velocity.y = 0;
           position.add(item.velocity);
@@ -138,16 +143,44 @@ window.character = (() => {
           }
 
         }
+
         if (item.side === 1) {
           position.x = item.intersect;
-          if (control.pressed[0]) {
+          if (control.pressed[0] && velocity.y < 0 && stamina > 0) {
             velocity = item.velocity;
+            characterAnimations.to('wall');
+            stamina -= .1;
+
+            if (control.pressed[1]) {
+              if (jump.first) {
+                velocity.add(new V(20, 15));
+                characterAnimations.to('jump', false, true);
+                jump.first = false;
+                stamina -= 4;
+              }
+            } else {
+              jump.first = true;
+            }
           }
         }
+
         if (item.side === 3) {
           position.x = item.intersect;
-          if (control.pressed[2]) {
+          if (control.pressed[2] && velocity.y < 0 && stamina > 0) {
             velocity = item.velocity;
+            characterAnimations.to('wall');
+            stamina -= .1;
+
+            if (control.pressed[1]) {
+              if (jump.first) {
+                velocity.add(new V(-20, 15));
+                characterAnimations.to('jump', false, true);
+                jump.first = false;
+                stamina -= 4;
+              }
+            } else {
+              jump.first = true;
+            }
           }
         }
         if (item.side === 2) {
@@ -156,48 +189,13 @@ window.character = (() => {
         }
       });
 
-      if (collisionResult.sides.indexOf(3) !== -1) {
-        if (control.pressed[2]) {
-          characterAnimations.to('wall');
-
-          if (control.pressed[1]) {
-            if (jump.first) {
-              velocity.add(new V(-20, 15));
-              characterAnimations.to('jump', false, true);
-              jump.first = false;
-            }
-          } else {
-            jump.first = true;
-          }
-        }
-      }
-
-      if (collisionResult.sides.indexOf(1) !== -1) {
-        if (control.pressed[0]) {
-          characterAnimations.to('wall');
-
-          if (control.pressed[1]) {
-            if (jump.first) {
-              velocity.add(new V(20, 15));
-              characterAnimations.to('jump', false, true);
-              jump.first = false;
-            }
-          } else {
-            jump.first = true;
-          }
-        }
-      }
-
-      if (collisionResult.sides.indexOf(0) !== -1) {
-        if (control.pressed[0]) {
+      if (collisionResult.sides.indexOf(0) !== -1 && velocity.y <= 0) {
+        if (control.pressed[0] || control.pressed[2]) {
           characterAnimations.to('walk');
-        }
-        if (control.pressed[2]) {
-          characterAnimations.to('walk');
-        }
-        if (!control.pressed[0] && !control.pressed[2]) {
+        } else {
           characterAnimations.to('stay');
         }
+
         if (control.pressed[1]) {
           if (jump.first) {
             velocity.add(new V(0, 15));
@@ -220,7 +218,7 @@ window.character = (() => {
         inAir = true;
       }
 
-      if (!collisionResult.sides.length && velocity.y < 0) {
+      if ((!collisionResult.sides.length || stamina < 0) && velocity.y < 0) {
         characterAnimations.to('fall');
 
         if (control.pressed[1] && jump.second) {
@@ -242,18 +240,31 @@ window.character = (() => {
       position.x = position.x < 0 ? 0 : position.x;
 
       if (position.y + size.y < 0) toDie();
+
+      if (position.x >= map.getEndLine()) {
+        levelIsCompleted = true;
+      }
     },
     r: () => {
       c.save();
       characterAnimations.r(position);
       c.restore();
+
+      if (stamina < MAX_STAMINA) {
+        c.save();
+        c.fillStyle = 'green';
+        c.fillRect(position.x -10, position.y + size.y + 10, stamina * 4 < 0 ? 0 : stamina * 6, 8);
+        c.restore();
+      }
+
       // c.save();
       // c.strokeStyle = 'red';
       // c.strokeWidth = 1;
-      // c.strokeRect(position.x, position.y, b[0], b[1]);
+      // c.strokeRect(position.x, position.y, size.x, size.y);
       // c.restore();
     },
     position: () => position,
-    isDead: () => die.isDead
+    isDead: () => die.isDead,
+    levelIsCompleted: () => levelIsCompleted
   };
 })();

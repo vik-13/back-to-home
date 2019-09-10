@@ -7,11 +7,15 @@ window.camera = (() => {
 
       if (characterPosition.x - position.x <= 400) {
         position.x = characterPosition.x - 400;
-      } else if ((position.x + gc.res.x) - characterPosition.x <= 400) {
-        position.x = characterPosition.x - (gc.res.x - 400);
+      } else if ((position.x + gc.res.x) - characterPosition.x <= 500) {
+        position.x = characterPosition.x - (gc.res.x - 500);
       }
       if (position.x < 0) {
         position.x = 0;
+      }
+
+      if (position.x + gc.res.x > map.getEndLine()) {
+        position.x = map.getEndLine() - gc.res.x;
       }
 
       if (characterPosition.y - position.y <= 200) {

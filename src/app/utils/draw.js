@@ -8,8 +8,8 @@ window.draw = (() => {
 			}
 			g.forEach((p) => {
 				bp();
-				c.fillStyle = color.get(p[2]) || p[2] || t;
-				c.strokeStyle = color.get(p[1]) || p[1] || t;
+				c.fillStyle = p[2] || t;
+				c.strokeStyle = p[1] || t;
 				c.lineWidth = !p[3] ? width : 1;
 				c.lineJoin = 'round';
 				m(p[0][0], p[0][1]);

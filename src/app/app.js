@@ -7,7 +7,7 @@
     mousePosition: new V(),
     start: +new Date(),
     last: +new Date(),
-    paused: true
+    paused: false
   };
 
   function init() {
@@ -56,22 +56,34 @@
     requestAnimationFrame(live);
   }
 
-  function endGame() {
+  function reset() {
     character.reset();
     map.reset();
+    gc.paused = false;
   }
 
-  function endLevel() {
-
+  function nextLevel() {
+    if (map.isLast()) {
+      // TODO WIN!
+    } else {
+      setTimeout(() => {
+        map.nextLevel();
+        reset();
+      }, 1000);
+    }
   }
 
   function n() {
+    if (gc.paused) return;
     scene.n();
 
-    if (character.isDead()) {
-      endGame();
+    if (character.levelIsCompleted()) {
+      gc.paused = true;
+      nextLevel();
+    } else if (character.isDead()) {
+      gc.paused = true;
+      reset();
     }
-    // console.log(control.pressed);
   }
 
   function r() {
