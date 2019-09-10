@@ -40,6 +40,7 @@ window.camera = (() => {
     },
     r: () => {
       c.translate(-position.x, -position.y);
-    }
+    },
+    getPosition: () => position
   };
 })();
