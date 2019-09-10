@@ -10,14 +10,18 @@
     paused: false
   };
 
-  function init() {
-    gc.canvas = document.getElementById('app');
+  function initOutput(element) {
+    gc.canvas = element;
 
     window.c = gc.canvas.getContext('2d');
     window.l = c.lineTo.bind(c);
     window.m = c.moveTo.bind(c);
     window.bp = c.beginPath.bind(c);
     window.cp = c.closePath.bind(c);
+  }
+
+  function init() {
+    initOutput(document.getElementById('app'));
     gc.gravity = new V(0, -.8);
 
     resize();
@@ -39,7 +43,7 @@
     gc.canvas.style.width = Math.round(gc.res.x * gc.originalRatio) + 'px';
     gc.canvas.style.height = Math.round(gc.res.y * gc.originalRatio) + 'px';
     gc.ratio = gc.originalRatio * (window.devicePixelRatio || 1);
-    // gc.ratio = gc.originalRatio;
+    //gc.ratio = gc.originalRatio;
 
     changeCanvasSize();
   }
@@ -50,15 +54,18 @@
   }
 
   function live() {
+    fps.add(+new Date() - gc.last);
     gc.last = +new Date();
     n();
     r();
     requestAnimationFrame(live);
+
+    document.getElementById('fps').textContent = fps.get();
   }
 
   function reset() {
-    map.reset();
-    character.reset();
+    scene.reset();
+
     gc.paused = false;
   }
 

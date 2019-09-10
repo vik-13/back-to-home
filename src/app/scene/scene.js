@@ -1,13 +1,18 @@
 window.scene = (() => {
   return {
     i: () => {
+      background.i();
       map.i();
       character.i();
     },
     reset: () => {
+      background.reset();
       map.reset();
+      character.reset();
+      camera.reset();
     },
     n: () => {
+      background.n();
       map.n();
       character.n();
       camera.n();
@@ -26,6 +31,8 @@ window.scene = (() => {
       map.r();
       character.r();
       c.restore();
+
+      background.r();
     }
   };
 })();

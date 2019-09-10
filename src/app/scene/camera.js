@@ -1,15 +1,13 @@
 window.camera = (() => {
   let position = new V();
+  let to = new V();
 
   return {
-    n: () => {
+    reset: () => {
       const characterPosition = character.position();
 
-      if (characterPosition.x - position.x <= 400) {
-        position.x = characterPosition.x - 400;
-      } else if ((position.x + gc.res.x) - characterPosition.x <= 500) {
-        position.x = characterPosition.x - (gc.res.x - 500);
-      }
+      position.apply(new V(characterPosition.x - (gc.res.x / 2), characterPosition.y - (gc.res.y / 2)));
+
       if (position.x < 0) {
         position.x = 0;
       }
@@ -18,14 +16,27 @@ window.camera = (() => {
         position.x = map.getEnd().x + 40 - gc.res.x;
       }
 
-      if (characterPosition.y - position.y <= 200) {
-        position.y = characterPosition.y - 200;
-      } else if ((position.y + gc.res.y) - characterPosition.y <= 200) {
-        position.y = characterPosition.y - (gc.res.y - 200);
-      }
       if (position.y < 0) {
         position.y = 0;
       }
+    },
+    n: () => {
+      const characterPosition = character.position();
+
+      to.apply(new V(characterPosition.x - (gc.res.x / 2), characterPosition.y - (gc.res.y / 2)));
+
+      if (to.x < 0) {
+        to.x = 0;
+      }
+
+      if (to.x + gc.res.x > map.getEnd().x + 40) {
+        to.x = map.getEnd().x + 40 - gc.res.x;
+      }
+
+      if (to.y < 0) {
+        to.y = 0;
+      }
+      position.add(to.get().sub(position).mult(.05));
     },
     r: () => {
       c.translate(-position.x, -position.y);

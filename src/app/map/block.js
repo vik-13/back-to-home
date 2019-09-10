@@ -8,7 +8,6 @@ function SawBlock(type, x, y, w, h, d) {
   this.active = true;
   this.collisionRadius = 35;
 
-
   const func = [
     () => {
       velocity += acc;
