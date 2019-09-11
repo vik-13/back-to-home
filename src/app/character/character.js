@@ -2,6 +2,8 @@ window.character = (() => {
   const MASS = .9;
   const MAX_SPEED = 4;
   const MAX_STAMINA = 15;
+  const OUT_STAMINA_AT_WALL_JUMP = 2.5;
+  const OUT_STAMINA_AT_WALL = .07;
 
   let die = {
     isDead: false,
@@ -24,12 +26,24 @@ window.character = (() => {
   function collision(position) {
     const collisionInfo = {
       touches: [],
-      sides: []
+      sides: [],
+      isOverFan: false
     };
 
     map.getMap().enemy.forEach((block) => {
-      if (block.center().distance(position.get().add(new V(size.x / 2, size.y / 2))) < block.collisionRadius + 20) {
-        toDie();
+      if (block.type === 8) {
+        if (position.x + (size.x / 2) > block.x && position.x + (size.x / 2) < block.x + 120 && position.y >= block.y - 10) {
+          const distance = position.y - block.y;
+          if (distance < (400)) {
+            velocity.add(new V(0, 3 * (1 - distance / 400)));
+            characterAnimations.to('flying');
+          }
+          collisionInfo.isOverFan = true;
+        }
+      } else {
+        if (block.center().distance(position.get().add(new V(size.x / 2, size.y / 2))) < block.collisionRadius + 20) {
+          toDie();
+        }
       }
     });
 
@@ -67,8 +81,13 @@ window.character = (() => {
     return collisionInfo;
   }
 
-  function toDie() {
+  function toDie(falling) {
     if (die.dying) return;
+    if (falling) {
+      particles.dying(position.get().add(new V(0, size.y)), [color.dying1, color.dying2, color.dying3, color.dying4]);
+    } else {
+      particles.dying(position, [color.dying1, color.dying2, color.dying3, color.dying4]);
+    }
     velocity = new V();
     die.dying = true;
     setTimeout(() => {
@@ -143,7 +162,9 @@ window.character = (() => {
               velocity.x /= 2;
             }
           }
-
+          if (Math.abs(velocity.x) > .1) {
+            particles.addRunning(position);
+          }
         }
 
         if (item.side === 1) {
@@ -151,14 +172,14 @@ window.character = (() => {
           if (control.pressed[0] && velocity.y < 0 && stamina > 0) {
             velocity = item.velocity;
             characterAnimations.to('wall');
-            stamina -= .1;
+            stamina -= OUT_STAMINA_AT_WALL;
 
             if (control.pressed[1]) {
               if (jump.first) {
                 velocity.add(new V(20, 15));
                 characterAnimations.to('jump', false, true);
                 jump.first = false;
-                stamina -= 4;
+                stamina -= OUT_STAMINA_AT_WALL_JUMP;
               }
             } else {
               jump.first = true;
@@ -171,14 +192,14 @@ window.character = (() => {
           if (control.pressed[2] && velocity.y < 0 && stamina > 0) {
             velocity = item.velocity;
             characterAnimations.to('wall');
-            stamina -= .1;
+            stamina -= OUT_STAMINA_AT_WALL;
 
             if (control.pressed[1]) {
               if (jump.first) {
                 velocity.add(new V(-20, 15));
                 characterAnimations.to('jump', false, true);
                 jump.first = false;
-                stamina -= 4;
+                stamina -= OUT_STAMINA_AT_WALL_JUMP;
               }
             } else {
               jump.first = true;
@@ -214,6 +235,7 @@ window.character = (() => {
 
         if (inAir) {
           characterAnimations.to('sit', true);
+          particles.addJump(position, velocity.x);
           inAir = false;
         }
       } else {
@@ -221,7 +243,9 @@ window.character = (() => {
       }
 
       if ((!collisionResult.sides.length || stamina < 0) && velocity.y < 0) {
-        characterAnimations.to('fall');
+        if (!collisionResult.isOverFan) {
+          characterAnimations.to('fall');
+        }
 
         if (control.pressed[1] && jump.second) {
           velocity.apply(new V(0, 15));
@@ -245,7 +269,7 @@ window.character = (() => {
         isGoingBack = true;
       }
 
-      if (position.y + size.y < 0) toDie();
+      if (position.y + size.y < 0) toDie(true);
 
       if (position.x >= map.getEnd().x + 40) {
         levelIsCompleted = true;
