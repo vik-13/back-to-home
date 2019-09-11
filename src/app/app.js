@@ -42,8 +42,8 @@
     gc.originalRatio = Math.min(gc.size.x / gc.res.x, gc.size.y / gc.res.y);
     gc.canvas.style.width = Math.round(gc.res.x * gc.originalRatio) + 'px';
     gc.canvas.style.height = Math.round(gc.res.y * gc.originalRatio) + 'px';
-    gc.ratio = gc.originalRatio * (window.devicePixelRatio || 1);
-    //gc.ratio = gc.originalRatio;
+    // gc.ratio = gc.originalRatio * (window.devicePixelRatio || 1);
+    gc.ratio = gc.originalRatio;
 
     changeCanvasSize();
   }

@@ -5,6 +5,8 @@ window.character = (() => {
   const OUT_STAMINA_AT_WALL_JUMP = 2.5;
   const OUT_STAMINA_AT_WALL = .07;
 
+  let atFinalPosition = false;
+  let finalOpacity = 1;
   let die = {
     isDead: false,
     dying: false
@@ -20,6 +22,8 @@ window.character = (() => {
     done: false
   };
   let inAir = false;
+  let lastMove = +new Date();
+  let isRelaxing = false;
 
   let stamina = MAX_STAMINA;
 
@@ -106,6 +110,7 @@ window.character = (() => {
     reset: () => {
       velocity = new V();
       position = map.getCharacterStart().get();
+      characterAnimations.mirror(position.x !== 0);
       die = {
         dying: false,
         isDead: false
@@ -163,7 +168,7 @@ window.character = (() => {
             }
           }
           if (Math.abs(velocity.x) > .1) {
-            particles.addRunning(position);
+            particles.addRunning(position, velocity);
           }
         }
 
@@ -172,6 +177,7 @@ window.character = (() => {
           if (control.pressed[0] && velocity.y < 0 && stamina > 0) {
             velocity = item.velocity;
             characterAnimations.to('wall');
+            particles.addWall(position, -1);
             stamina -= OUT_STAMINA_AT_WALL;
 
             if (control.pressed[1]) {
@@ -192,6 +198,7 @@ window.character = (() => {
           if (control.pressed[2] && velocity.y < 0 && stamina > 0) {
             velocity = item.velocity;
             characterAnimations.to('wall');
+            particles.addWall(position, 1);
             stamina -= OUT_STAMINA_AT_WALL;
 
             if (control.pressed[1]) {
@@ -215,7 +222,7 @@ window.character = (() => {
       if (collisionResult.sides.indexOf(0) !== -1 && velocity.y <= 0) {
         if (control.pressed[0] || control.pressed[2]) {
           characterAnimations.to('walk');
-        } else {
+        } else if (!isRelaxing) {
           characterAnimations.to('stay');
         }
 
@@ -234,7 +241,7 @@ window.character = (() => {
         }
 
         if (inAir) {
-          characterAnimations.to('sit', true);
+          characterAnimations.to('drop', true);
           particles.addJump(position, velocity.x);
           inAir = false;
         }
@@ -247,9 +254,10 @@ window.character = (() => {
           characterAnimations.to('fall');
         }
 
-        if (control.pressed[1] && jump.second) {
+        if (control.pressed[1] && (jump.second || jump.first)) {
           velocity.apply(new V(0, 15));
           characterAnimations.to('jump', false, true);
+          jump.first = false;
           jump.second = false;
           jump.done = true;
         }
@@ -274,6 +282,46 @@ window.character = (() => {
       if (position.x >= map.getEnd().x + 40) {
         levelIsCompleted = true;
       }
+
+      if (control.pressed[0] || control.pressed[1] || control.pressed[2]) {
+        lastMove = +new Date();
+      }
+
+      if (+new Date() - lastMove > 10000) {
+        if (!isRelaxing) {
+          isRelaxing = true;
+          characterAnimations.to(['dancing', 'sit'][rInt(0, 2)]);
+        }
+      } else {
+        isRelaxing = false;
+      }
+    },
+    nFinal: () => {
+      const maxSpeed = .5;
+      if (!atFinalPosition) {
+        characterAnimations.to('slowWalk');
+
+        const acc = velocity.get().normalize().mult(-0.017);
+        acc.add(new V(.1, 0));
+
+        velocity.add(acc);
+        velocity.x = Math.abs(velocity.x) < maxSpeed ? velocity.x : ((Math.abs(velocity.x) / velocity.x) * maxSpeed);
+        position.add(velocity);
+
+        if (position.x >= 1000 - (size.x / 2)) {
+          position.x = 1000 - (size.x / 2);
+          atFinalPosition = true;
+          characterAnimations.to('dancing');
+          setTimeout(() => {
+            finalScene.i();
+          }, 5000);
+        }
+      } else {
+        finalOpacity -= .004;
+        if (finalOpacity < 0) {
+          finalOpacity = 0;
+        }
+      }
     },
     r: () => {
       c.save();
@@ -282,16 +330,17 @@ window.character = (() => {
 
       if (stamina < MAX_STAMINA) {
         c.save();
-        c.fillStyle = 'green';
+        c.fillStyle = color.stamina;
         c.fillRect(position.x -10, position.y + size.y + 10, stamina * 4 < 0 ? 0 : stamina * 6, 8);
         c.restore();
       }
-
-      // c.save();
-      // c.strokeStyle = 'red';
-      // c.strokeWidth = 1;
-      // c.strokeRect(position.x, position.y, size.x, size.y);
-      // c.restore();
+    },
+    rFinal: () => {
+      c.save();
+      c.globalAlpha = finalOpacity;
+      characterAnimations.r(position);
+      c.globalAlpha = 1;
+      c.restore();
     },
     position: () => position,
     isDead: () => die.isDead,

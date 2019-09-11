@@ -15,13 +15,14 @@ window.scene = (() => {
     n: () => {
       background.n();
       map.n();
-      character.n();
+      if (map.isLast()) {
+        character.nFinal();
+        finalScene.n();
+      } else {
+        character.n();
+      }
       particles.n();
       camera.n();
-
-      if (map.isLast()) {
-        finalScene.n();
-      }
     },
     r: () => {
       c.save();
@@ -43,8 +44,10 @@ window.scene = (() => {
       map.r();
       if (map.isLast()) {
         finalScene.r();
+        character.rFinal();
+      } else {
+        character.r();
       }
-      character.r();
       particles.r();
       c.restore();
     }
