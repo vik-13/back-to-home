@@ -44,6 +44,12 @@ window.character = (() => {
           }
           collisionInfo.isOverFan = true;
         }
+      } else if (block.type === 3) {
+        if (block.active && block.center().distance(position.get().add(new V(size.x / 2, size.y / 2))) < block.collisionRadius + 20) {
+          jump.done = false;
+          stamina = MAX_STAMINA;
+          block.destroy();
+        }
       } else {
         if (block.center().distance(position.get().add(new V(size.x / 2, size.y / 2))) < block.collisionRadius + 20) {
           toDie();
@@ -290,7 +296,7 @@ window.character = (() => {
         lastMove = +new Date();
       }
 
-      if (+new Date() - lastMove > 10000) {
+      if (+new Date() - lastMove > 20000) {
         if (!isRelaxing) {
           isRelaxing = true;
           characterAnimations.to(['dancing', 'sit'][rInt(0, 2)]);

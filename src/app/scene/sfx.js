@@ -1,10 +1,7 @@
 window.sfx = (() => {
-  const dying = [[61.74, 3]];
+  let lastFX = +new Date();
 
-  let lastRunFX = +new Date();
-  let lastWallFX = +new Date();
-
-  function playShort(frequency, time) {
+  function playShort(frequency, time, volume) {
     const o = gc.ac.createOscillator();
     const g = gc.ac.createGain();
     o.type = 'triangle';
@@ -12,6 +9,7 @@ window.sfx = (() => {
     g.connect(gc.ac.destination);
     o.frequency.value = frequency;
     o.start(0);
+    g.gain.value = volume || 1;
     g.gain.exponentialRampToValueAtTime(0.00001, gc.ac.currentTime + (time || .5));
   }
 
@@ -19,11 +17,12 @@ window.sfx = (() => {
     function recursive(index) {
       playShort(...list[index]);
       index++;
-      if (index < list.length) {
-        setTimeout(() => {
-          recursive(index);
-        }, list[index][1] * 1000);
+      if (index >= list.length){
+        index = 0;
       }
+      setTimeout(() => {
+        recursive(index);
+      }, list[index][1] * 200);
     }
     recursive(0);
   }
@@ -36,20 +35,28 @@ window.sfx = (() => {
       playShort(82.41, .2);
     },
     run: () => {
-      if (+new Date() - lastRunFX < 200) return;
-      playShort(146.83, .05);
-      lastRunFX = +new Date();
+      if (+new Date() - lastFX < 200) return;
+      playShort(146.83, .05, .4);
+      lastFX = +new Date();
     },
     wall: () => {
-      if (+new Date() - lastWallFX < 100) return;
+      if (+new Date() - lastFX < 100) return;
       playShort(41.20, .2);
-      lastWallFX = +new Date();
+      lastFX = +new Date();
     },
     die: () => {
-      play(dying);
+      playShort(61.74, 3);
     },
-    win: () => {
-      play(dying);
+    fallingBlock: () => {
+      playShort(51.91, 5);
+    },
+    takePower: () => {
+      playShort(220.00, .5);
+    },
+    flying: () => {
+      if (+new Date() - lastFX < 30) return;
+      playShort(27.50, .5);
+      lastFX = +new Date();
     }
   };
 })();

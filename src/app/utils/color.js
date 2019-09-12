@@ -7,5 +7,6 @@ window.color = {
   dying4: 'hsl(15, 85%, 30%)',
   black: '#141212',
   ice: '#001933',
-  stamina: '#023609'
+  stamina: '#023609',
+  power: 'yellow'
 };

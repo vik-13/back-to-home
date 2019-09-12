@@ -91,6 +91,21 @@ window.particles = (function() {
 				);
 			}
 		},
+		takePower: (position) => {
+			const amount = 30;
+			for (let i = 0; i < amount; i++) {
+				list.push(
+					new Particle(
+						rFloat(.1, .3),
+						rInt(1, 4),
+						position.get(),
+						new V(rFloat(.5, 2) * Math.sin(rFloat(0, Math.PI * 2)), rFloat(3, 4) * Math.cos(rFloat(0, Math.PI * 2))),
+						500,
+						color.power
+					)
+				);
+			}
+		},
 		n: () => {
 			list = list.filter(function(particle) {
 				particle.n();

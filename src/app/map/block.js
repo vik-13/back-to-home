@@ -1,3 +1,51 @@
+function PowerBlock(type, x, y) {
+  this.type = type;
+  this.x = x;
+  this.y = y;
+  this.active = true;
+  this.collisionRadius = 35;
+
+  let startBeingInactive = 0;
+  let opacity = 1;
+
+  const anim = new Anim([[[18,0,18,37,0,17],'','power',1]], [[[18,4,18,42,36,21]]], 500);
+
+  this.center = () => new V(this.x + 15, this.y + 15);
+
+  this.destroy = () => {
+    this.active = false;
+    opacity = 0;
+    startBeingInactive = +new Date();
+    particles.takePower(new V(this.x, this.y));
+    sfx.takePower();
+  };
+
+  this.n = () => {
+    if (!this.active && +new Date() - startBeingInactive >= 4000) {
+      this.active = true;
+    }
+
+    if (this.active) {
+      opacity += .03;
+      if (opacity > 1) {
+        opacity = 1;
+      }
+    }
+  };
+
+  this.r = () => {
+    if (this.active) {
+      c.save();
+      c.globalAlpha = opacity;
+      c.translate(this.x, this.y);
+      c.scale(1, -1);
+      draw.r(anim.n(), [36, 37]);
+      c.globalAlpha = 1;
+      c.restore();
+    }
+  };
+}
+
 function FanBlock(type, x, y) {
   this.type = type;
   this.x = x;
@@ -140,6 +188,7 @@ function BrokenBlock(type, x, y, w, h, d) {
 
   this.startFalling = () => {
     if (this.falling.active) return;
+    sfx.fallingBlock();
     this.falling.active = true;
     this.falling.start = +new Date();
   };

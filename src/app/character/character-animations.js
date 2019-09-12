@@ -48,7 +48,7 @@ window.characterAnimations = (() => {
     die: [
       gMain,
       [[[3,56,27,27,31,58],[66,46,57,60,34,59],[-29,57,-8,49,7,59],[21,40,25,34,26,41]]],
-      500,
+      1000,
       true
     ],
     flying: [
@@ -86,6 +86,8 @@ window.characterAnimations = (() => {
         sfx.run();
       } else if (name === 'wall') {
         sfx.wall();
+      } else if (name === 'flying') {
+        sfx.flying();
       }
       if (currentName === name) return;
       if (name === 'jump') {
