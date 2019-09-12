@@ -225,6 +225,7 @@ function BrokenBlock(type, x, y, w, h, d) {
         setTimeout(() => {
           this.falling.active = false;
           this.falling.falling = false;
+          this.falling.velocity = new V();
           this.falling.dead = false;
           this.active = true;
           this.x = x;

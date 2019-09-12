@@ -2,6 +2,7 @@ window.sfx = (() => {
   let lastFX = +new Date();
 
   function playShort(frequency, time, volume) {
+    if (gc.muted) return false;
     const o = gc.ac.createOscillator();
     const g = gc.ac.createGain();
     o.type = 'triangle';
@@ -11,20 +12,6 @@ window.sfx = (() => {
     o.start(0);
     g.gain.value = volume || 1;
     g.gain.exponentialRampToValueAtTime(0.00001, gc.ac.currentTime + (time || .5));
-  }
-
-  function play(list) {
-    function recursive(index) {
-      playShort(...list[index]);
-      index++;
-      if (index >= list.length){
-        index = 0;
-      }
-      setTimeout(() => {
-        recursive(index);
-      }, list[index][1] * 200);
-    }
-    recursive(0);
   }
 
   return {

@@ -8,5 +8,6 @@ window.color = {
   black: '#141212',
   ice: '#001933',
   stamina: '#023609',
-  power: 'yellow'
+  power: 'yellow',
+  white: '#b4b5b8'
 };

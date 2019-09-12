@@ -13,6 +13,22 @@ window.control = (() => {
         if (event.code === 'KeyD' || event.code === 'ArrowRight') {
           pressed[2] = 1;
         }
+
+        if (event.code === 'Digit1') {
+          gc.changeQuality(1);
+        }
+        if (event.code === 'Digit2') {
+          gc.changeQuality(.75);
+        }
+        if (event.code === 'Digit3') {
+          gc.changeQuality(.5);
+        }
+        if (event.code === 'Digit4') {
+          gc.changeQuality(.3);
+        }
+        if (event.code === 'KeyM') {
+          gc.muted = !gc.muted;
+        }
       });
       window.addEventListener('keyup', (event) => {
         if (event.code === 'KeyA' || event.code === 'ArrowLeft') {

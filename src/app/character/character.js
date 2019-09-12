@@ -116,6 +116,7 @@ window.character = (() => {
     reset: () => {
       velocity = new V();
       position = map.getCharacterStart().get();
+      stamina = MAX_STAMINA;
       characterAnimations.mirror(position.x !== 0);
       die = {
         dying: false,

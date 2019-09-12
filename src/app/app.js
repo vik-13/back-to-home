@@ -7,7 +7,13 @@
     start: +new Date(),
     last: +new Date(),
     paused: false,
-    splashScreen: true
+    splashScreen: true,
+    graphicsQuality: 1,
+    muted: false,
+    changeQuality: (value) => {
+      gc.graphicsQuality = value;
+      changeCanvasSize();
+    }
   };
 
   function initOutput(element) {
@@ -34,7 +40,7 @@
 
     gc.canvas.addEventListener('click', (e) => {
       if (gc.splashScreen) gc.splashScreen = false;
-      gc.ac = new AudioContext();
+      gc.ac = window.AudioContext ? new AudioContext() : new window.webkitAudioContext();
     });
   }
 
@@ -43,25 +49,23 @@
     gc.originalRatio = Math.min(gc.size.x / gc.res.x, gc.size.y / gc.res.y);
     gc.canvas.style.width = Math.round(gc.res.x * gc.originalRatio) + 'px';
     gc.canvas.style.height = Math.round(gc.res.y * gc.originalRatio) + 'px';
-    // gc.ratio = gc.originalRatio * (window.devicePixelRatio || 1);
-    gc.ratio = gc.originalRatio;
+    gc.ratio = gc.originalRatio * (window.devicePixelRatio || 1);
 
     changeCanvasSize();
   }
 
   function changeCanvasSize() {
-    gc.canvas.width = Math.round(gc.res.x * gc.ratio);
-    gc.canvas.height = Math.round(gc.res.y * gc.ratio);
+    gc.canvas.width = Math.round(gc.res.x * gc.ratio * gc.graphicsQuality);
+    gc.canvas.height = Math.round(gc.res.y * gc.ratio * gc.graphicsQuality);
   }
 
   function live() {
     fps.add(+new Date() - gc.last);
     gc.last = +new Date();
+
     n();
     r();
     requestAnimationFrame(live);
-
-    document.getElementById('fps').textContent = fps.get();
   }
 
   function reset() {
@@ -71,14 +75,10 @@
   }
 
   function nextLevel(direction) {
-    if (direction === 1 && map.isLast()) {
-      // TODO WIN!
-    } else {
-      setTimeout(() => {
-        map.nextLevel(direction);
-        reset();
-      }, 30);
-    }
+    setTimeout(() => {
+      map.nextLevel(direction);
+      reset();
+    }, 30);
   }
 
   function n() {
@@ -99,7 +99,7 @@
 
   function r() {
     c.save();
-    c.scale(gc.ratio, gc.ratio);
+    c.scale(gc.ratio * gc.graphicsQuality, gc.ratio * gc.graphicsQuality);
     scene.r();
     c.restore();
   }
