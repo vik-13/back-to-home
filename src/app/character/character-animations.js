@@ -5,7 +5,8 @@ window.characterAnimations = (() => {
     stay: [
       gMain,
       [[[1,12,37,3,22,29],[22,29,35,41,34,59],[22,29,21,47,8,58],[23,10,30,9,27,14]]],
-      400
+      400,
+      false
     ],
     walk: [
       gMain,
@@ -15,7 +16,7 @@ window.characterAnimations = (() => {
     slowWalk: [
       gMain,
       [[[3,8,41,5,21,28],[21,27,24,44,13,60],[22,26,28,44,21,58],[24,9,31,10,27,14]],[[0,9,36,0,21,26],[21,27,17,44,1,55],[22,26,34,40,32,58],[22,7,29,6,26,11]],[[2,8,39,3,21,28],[21,26,30,41,25,60],[21,27,25,45,14,60],[23,8,31,9,26,13]]],
-      400
+      320
     ],
     jump: [
       gMain,
@@ -81,7 +82,19 @@ window.characterAnimations = (() => {
       mirrored = value;
     },
     to: (name, blocked, force) => {
+      if (name === 'walk') {
+        sfx.run();
+      } else if (name === 'wall') {
+        sfx.wall();
+      }
       if (currentName === name) return;
+      if (name === 'jump') {
+        sfx.jump();
+      } else if (name === 'drop') {
+        sfx.fall();
+      } else if (name === 'die') {
+        sfx.die();
+      }
       if (isBlocked && !force) {
         nextAnim = name;
       } else {
@@ -90,9 +103,10 @@ window.characterAnimations = (() => {
         isBlocked = blocked;
       }
     },
-    r: (position) => {
+    r: (position, scale) => {
+      let s = scale || 1;
       c.translate(position.x + (size[0] / 2), position.y + (size[1] / 2));
-      c.scale( mirrored ? -1 : 1, -1);
+      c.scale( mirrored ? -s : s, -s);
       draw.r(current.n(), size);
       if (isBlocked && current.isFinished()) {
         next();

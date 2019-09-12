@@ -29,6 +29,18 @@ window.finalScene = (() => {
     },
     r: () => {
       c.save();
+      c.translate(100, 550);
+      c.scale(1, -1);
+      c.font = '120px Courier New';
+      c.textAlign = 'left';
+      c.fillStyle = "white";
+      c.fillText('THE END', 0, 0);
+      c.translate(0, 100);
+      c.font = '60px Courier New';
+      c.fillText('Thanks for playing!', 10, 0);
+      c.restore();
+
+      c.save();
       c.translate(position.x, position.y);
       c.scale(scale, -scale);
       c.rotate(angle);
@@ -36,7 +48,14 @@ window.finalScene = (() => {
       c.restore();
     },
     rBackground: () => {
-
+      let bg = c.createLinearGradient(0, 0, 0, gc.res.y);
+      bg.addColorStop(0, 'hsl(238, 10%, 30%)');
+      bg.addColorStop(1, 'hsl(238, 10%, 10%)');
+      c.save();
+      c.fillStyle = bg;
+      // c.fillStyle = '#000000';
+      c.fillRect(0, 0, gc.res.x, gc.res.y);
+      c.restore();
     }
   };
 })();

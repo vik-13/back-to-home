@@ -149,6 +149,9 @@ window.character = (() => {
 
       collisionResult.touches.forEach((item) => {
         if (item.type === 1) {
+          if (velocity.y > 0) {
+            velocity.y = 0;
+          }
           toDie();
           return;
         }
@@ -174,7 +177,7 @@ window.character = (() => {
 
         if (item.side === 1) {
           position.x = item.intersect;
-          if (control.pressed[0] && velocity.y < 0 && stamina > 0) {
+          if (control.pressed[0] && velocity.y < 0 && stamina > 0 && collisionResult.sides.indexOf(0) === -1) {
             velocity = item.velocity;
             characterAnimations.to('wall');
             particles.addWall(position, -1);
@@ -195,7 +198,7 @@ window.character = (() => {
 
         if (item.side === 3) {
           position.x = item.intersect;
-          if (control.pressed[2] && velocity.y < 0 && stamina > 0) {
+          if (control.pressed[2] && velocity.y < 0 && stamina > 0 && collisionResult.sides.indexOf(0) === -1) {
             velocity = item.velocity;
             characterAnimations.to('wall');
             particles.addWall(position, 1);
@@ -297,7 +300,7 @@ window.character = (() => {
       }
     },
     nFinal: () => {
-      const maxSpeed = .5;
+      const maxSpeed = 1;
       if (!atFinalPosition) {
         characterAnimations.to('slowWalk');
 
@@ -323,6 +326,9 @@ window.character = (() => {
         }
       }
     },
+    nSplashScreen: () => {
+
+    },
     r: () => {
       c.save();
       characterAnimations.r(position);
@@ -338,8 +344,14 @@ window.character = (() => {
     rFinal: () => {
       c.save();
       c.globalAlpha = finalOpacity;
+      c.scale(1, 1 + (1 - finalOpacity));
       characterAnimations.r(position);
       c.globalAlpha = 1;
+      c.restore();
+    },
+    rSplashScreen: () => {
+      c.save();
+      characterAnimations.r(new V(320, 350), 6);
       c.restore();
     },
     position: () => position,

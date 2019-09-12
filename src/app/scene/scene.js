@@ -1,6 +1,12 @@
 window.scene = (() => {
+  let bg;
+
   return {
     i: () => {
+      bg = c.createLinearGradient(0, 0, 0, gc.res.y);
+      bg.addColorStop(0, 'hsl(37, 30%, 45%)');
+      bg.addColorStop(1, 'hsl(37, 30%, 10%)');
+
       background.i();
       map.i();
       character.i();
@@ -13,43 +19,48 @@ window.scene = (() => {
       camera.reset();
     },
     n: () => {
-      background.n();
-      map.n();
-      if (map.isLast()) {
-        character.nFinal();
-        finalScene.n();
+      if (gc.splashScreen) {
+        splashScreen.n();
       } else {
-        character.n();
+        background.n();
+        map.n();
+        if (map.isLast()) {
+          character.nFinal();
+          finalScene.n();
+        } else {
+          character.n();
+        }
+        particles.n();
+        camera.n();
       }
-      particles.n();
-      camera.n();
     },
     r: () => {
       c.save();
-      let bg = c.createLinearGradient(0, 0, 0, gc.res.y);
-      bg.addColorStop(0, 'hsl(37, 30%, 45%)');
-      bg.addColorStop(1, 'hsl(37, 30%, 25%)');
       c.fillStyle = bg;
       c.fillRect(0, 0, gc.res.x, gc.res.y);
       c.restore();
 
-      if (map.isLast()) {
-        finalScene.rBackground();
+      if (gc.splashScreen) {
+        splashScreen.r();
       } else {
-        background.r();
-      }
+        if (map.isLast()) {
+          finalScene.rBackground();
+        } else {
+          background.r();
+        }
 
-      c.save();
-      camera.r();
-      map.r();
-      if (map.isLast()) {
-        finalScene.r();
-        character.rFinal();
-      } else {
-        character.r();
+        c.save();
+        camera.r();
+        map.r();
+        if (map.isLast()) {
+          character.rFinal();
+          finalScene.r();
+        } else {
+          character.r();
+        }
+        particles.r();
+        c.restore();
       }
-      particles.r();
-      c.restore();
     }
   };
 })();

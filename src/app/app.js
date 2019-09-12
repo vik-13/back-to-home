@@ -4,10 +4,10 @@
 
   window.gc = {
     res: {x: 1280, y: 720},
-    mousePosition: new V(),
     start: +new Date(),
     last: +new Date(),
-    paused: false
+    paused: false,
+    splashScreen: true
   };
 
   function initOutput(element) {
@@ -32,8 +32,9 @@
 
     live();
 
-    gc.canvas.addEventListener('mousemove', (e) => {
-      gc.mousePosition = new V(e.offsetX, e.offsetY);
+    gc.canvas.addEventListener('click', (e) => {
+      if (gc.splashScreen) gc.splashScreen = false;
+      gc.ac = new AudioContext();
     });
   }
 
@@ -42,8 +43,8 @@
     gc.originalRatio = Math.min(gc.size.x / gc.res.x, gc.size.y / gc.res.y);
     gc.canvas.style.width = Math.round(gc.res.x * gc.originalRatio) + 'px';
     gc.canvas.style.height = Math.round(gc.res.y * gc.originalRatio) + 'px';
-    // gc.ratio = gc.originalRatio * (window.devicePixelRatio || 1);
-    gc.ratio = gc.originalRatio;
+    gc.ratio = gc.originalRatio * (window.devicePixelRatio || 1);
+    // gc.ratio = gc.originalRatio;
 
     changeCanvasSize();
   }
@@ -76,7 +77,7 @@
       setTimeout(() => {
         map.nextLevel(direction);
         reset();
-      }, 1000);
+      }, 30);
     }
   }
 
