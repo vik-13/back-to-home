@@ -60,7 +60,6 @@
   }
 
   function live() {
-    fps.add(+new Date() - gc.last);
     gc.last = +new Date();
 
     n();
