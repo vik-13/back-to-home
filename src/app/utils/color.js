@@ -6,6 +6,13 @@ window.color = {
   dying3: 'hsl(15, 85%, 10%)',
   dying4: 'hsl(15, 85%, 30%)',
   black: '#141212',
+  blackToBlue: (c) => {
+    const grd = c.createLinearGradient(0, 0, 0, 70);
+    grd.addColorStop(0, 'black');
+    grd.addColorStop(.5, 'black');
+    grd.addColorStop(1, 'lightblue');
+    return grd;
+  },
   ice: '#001933',
   stamina: '#023609',
   power: 'yellow',

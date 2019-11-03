@@ -36,7 +36,11 @@ window.camera = (() => {
       if (to.y < 0) {
         to.y = 0;
       }
-      position.add(to.get().sub(position).mult(.05));
+
+      const shift = to.get().sub(position);
+      shift.x *= .05;
+      shift.y *= .1;
+      position.add(shift);
     },
     r: () => {
       c.translate(-position.x, -position.y);
