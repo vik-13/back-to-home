@@ -6,26 +6,31 @@
 You can play it <a href="https://js13kgames.com/entries/triangle-back-to-home">here</a>
 ## Installation
 Install dependencies.
-
-'npm install'
+```
+npm install
+```
 
 Build a compact version in both **release** and **electronapp** folders.
-
-'./build.sh'
+```
+./build.sh'
+```
 
 ### Generating an Electron app
-Enter to the **electronapp** folder.
 ![triangle](screenshot2.png)
-
-'cd electronapp'
+Enter to the **electronapp** folder.
+```
+cd electronapp'
+```
 
 Install dependencies.
-
-'npm install'
+```
+npm install
+```
 
 Start
-
-'npm start'
+```
+npm start
+```
 
 ## Contributors
 
