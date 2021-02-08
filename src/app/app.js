@@ -20,6 +20,7 @@
     gc.canvas = element;
 
     window.c = gc.canvas.getContext('2d');
+    c.imageSmoothingEnabled = false;
     window.l = c.lineTo.bind(c);
     window.m = c.moveTo.bind(c);
     window.bp = c.beginPath.bind(c);

@@ -24,7 +24,7 @@ window.control = (() => {
           gc.changeQuality(.5);
         }
         if (event.code === 'Digit4') {
-          gc.changeQuality(.3);
+          gc.changeQuality(.1);
         }
         if (event.code === 'KeyM') {
           gc.muted = !gc.muted;
